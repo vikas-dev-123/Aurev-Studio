@@ -1,0 +1,356 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root {
+  --color-yellow-bg: #f4d93e;
+  --color-yellow-bg-deep: #e6c42b;
+  --color-yellow-ink: #17170d;
+
+  --color-green-bg: #2fd673;
+  --color-green-bg-deep: #1fb85f;
+  --color-green-ink: #08170f;
+
+  --color-pink-bg: #ff6fa0;
+  --color-pink-bg-deep: #f1508a;
+  --color-pink-ink: #1a0510;
+
+  --color-ink-black: #0b0b0c;
+  --color-paper-white: #faf9f5;
+
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: 4.5rem;
+}
+
+/* ============================================================
+   TONE MAP — one block, one hue.
+   Children inherit --fg from the nearest [data-tone] ancestor, so text can
+   never pick up a colour from a neighbouring section.
+   ============================================================ */
+[data-tone] {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+[data-tone='yellow'] {
+  --bg: var(--color-yellow-bg);
+  --fg: var(--color-yellow-ink);
+}
+[data-tone='yellow-deep'] {
+  --bg: var(--color-yellow-bg-deep);
+  --fg: var(--color-yellow-ink);
+}
+[data-tone='green'] {
+  --bg: var(--color-green-bg);
+  --fg: var(--color-green-ink);
+}
+[data-tone='green-deep'] {
+  --bg: var(--color-green-bg-deep);
+  --fg: var(--color-green-ink);
+}
+[data-tone='pink'] {
+  --bg: var(--color-pink-bg);
+  --fg: var(--color-pink-ink);
+}
+[data-tone='pink-deep'] {
+  --bg: var(--color-pink-bg-deep);
+  --fg: var(--color-pink-ink);
+}
+[data-tone='ink'] {
+  --bg: var(--color-ink-black);
+  --fg: var(--color-paper-white);
+}
+[data-tone='paper'] {
+  --bg: var(--color-paper-white);
+  --fg: var(--color-ink-black);
+}
+/* A wiped block paints its colour on an inner layer so the clip-path edge stays
+   hard. The block itself goes transparent; ink-black page base sits behind. */
+[data-tone][data-wipe] {
+  background-color: transparent;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-ink-black);
+    color: var(--color-paper-white);
+    font-family: var(--font-body);
+    font-feature-settings: 'cv11', 'ss01';
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: var(--color-ink-black);
+    color: var(--color-paper-white);
+  }
+  [data-tone='ink'] ::selection,
+  [data-tone='paper'] ::selection {
+    background: var(--color-yellow-bg);
+    color: var(--color-yellow-ink);
+  }
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* ============================================================
+   TYPE — Inter sets structure, Instrument Serif sets voice.
+   Display caps run tight; the serif runs italic and lowercase.
+   ============================================================ */
+@layer components {
+  .display {
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+  .display em,
+  .voice {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: -0.01em;
+  }
+  /* The serif is optically smaller at the same em size; nudge it back up. */
+  .display em {
+    font-size: 1.08em;
+    line-height: 0.9;
+  }
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .lede {
+    font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
+    line-height: 1.5;
+    max-width: 34ch;
+  }
+  .measure {
+    max-width: 66ch;
+  }
+  /* Chrome + editorial links: dim until hover, with a rule that grows from the left.
+     Colour comes from the block's own ink, so one class is legal on all nine tones. */
+  .footer-link,
+  .link-rule {
+    position: relative;
+    display: inline-block;
+    transition: color 180ms var(--ease-out-expo);
+  }
+  .footer-link {
+    color: color-mix(in srgb, var(--fg) 68%, transparent);
+  }
+  .footer-link::after,
+  .link-rule::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -2px;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 340ms var(--ease-out-expo);
+  }
+  .footer-link:hover,
+  .footer-link:focus-visible {
+    color: var(--fg);
+  }
+  .footer-link:hover::after,
+  .footer-link:focus-visible::after,
+  .link-rule:hover::after,
+  .link-rule:focus-visible::after {
+    transform: scaleX(1);
+  }
+  .link-rule::after {
+    opacity: 0.6;
+  }
+}
+
+/* ============================================================
+   SURFACE UTILITIES — all derived from the block's own ink, never a second hue.
+   ============================================================ */
+@layer utilities {
+  .text-dim {
+    color: color-mix(in srgb, var(--fg) 68%, transparent);
+  }
+  .text-faint {
+    color: color-mix(in srgb, var(--fg) 44%, transparent);
+  }
+  .rule {
+    border-color: color-mix(in srgb, var(--fg) 16%, transparent);
+  }
+  .rule-strong {
+    border-color: color-mix(in srgb, var(--fg) 32%, transparent);
+  }
+  .ink-fill {
+    background-color: var(--fg);
+    color: var(--bg);
+  }
+  /* Engineering-drawing grid, drawn in the block's own ink at low opacity. */
+  .grid-rule {
+    background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--fg) 9%, transparent) 0 1px,
+      transparent 1px 100%
+    );
+    background-size: 8.3333% 100%;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .edge-fade-none {
+    mask-image: none;
+  }
+}
+
+/* ============================================================
+   PRODUCT UI SCOPE
+   The fake software is deliberately monochrome. Brand colour lives on the
+   section around the device frame, never inside the screen — so a dashboard can
+   sit on yellow, green or pink without ever importing a second hue into a block.
+   Radius exists only in here: flat brand world outside, real software inside.
+   ============================================================ */
+.app-ui {
+  --app-bg: #0e1013;
+  --app-panel: #16191e;
+  --app-panel-2: #1d2127;
+  --app-line: rgba(250, 249, 245, 0.1);
+  --app-line-strong: rgba(250, 249, 245, 0.18);
+  --app-fg: #edeef0;
+  --app-dim: rgba(237, 238, 240, 0.58);
+  --app-faint: rgba(237, 238, 240, 0.34);
+  color: var(--app-fg);
+  background: var(--app-bg);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  container-type: inline-size;
+}
+.app-ui.app-light {
+  --app-bg: #f7f7f5;
+  --app-panel: #ffffff;
+  --app-panel-2: #f0f0ee;
+  --app-line: rgba(11, 11, 12, 0.1);
+  --app-line-strong: rgba(11, 11, 12, 0.2);
+  --app-fg: #14161a;
+  --app-dim: rgba(20, 22, 26, 0.6);
+  --app-faint: rgba(20, 22, 26, 0.38);
+}
+.app-ui .panel {
+  background: var(--app-panel);
+  border: 1px solid var(--app-line);
+  border-radius: 10px;
+}
+.app-ui .pill {
+  border: 1px solid var(--app-line-strong);
+  border-radius: 999px;
+}
+.app-ui .num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   MOTION
+   ============================================================ */
+/* ============================================================
+   CUSTOM CURSOR — the class is added by <Cursor> only on fine-pointer,
+   motion-ok devices, so touch and reduced-motion users keep the real pointer.
+   Text fields keep a caret regardless; hiding it there breaks form entry.
+   ============================================================ */
+html.cursor-none,
+html.cursor-none * {
+  cursor: none;
+}
+html.cursor-none input,
+html.cursor-none textarea,
+html.cursor-none select,
+html.cursor-none [contenteditable='true'] {
+  cursor: auto;
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.marquee-track {
+  animation: marquee-x var(--marquee-duration, 38s) linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes trace-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.trace-live {
+  stroke-dasharray: 4 8;
+  animation: trace-dash 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee-track,
+  .trace-live {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
