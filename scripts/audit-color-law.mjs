@@ -67,10 +67,31 @@ const tones = [...colorsSrc.matchAll(TONE_RE)].map(([, tone, hue, bg, fg, displa
   displayFg: displayFg === 'null' ? null : hex(displayFg),
 }));
 
-/** Derived text utilities from globals.css, audited at their real alphas. */
+/** Derived utilities, read out of globals.css so this can never drift from the CSS. */
+const cssSrc = read('src/styles/globals.css');
+
+/** Per-tone alpha overrides: [data-tone='pink'] { --a-dim: 86%; ... } */
+function alphasFor(tone) {
+  const base = /\[data-tone\]\s*\{([\s\S]*?)\}/.exec(cssSrc)?.[1] ?? '';
+  const block =
+    new RegExp(`\\[data-tone='${tone}'\\]\\s*\\{([\\s\\S]*?)\\}`).exec(cssSrc)?.[1] ?? '';
+  const pick = (name) => {
+    const re = new RegExp(`--a-${name}:\\s*(\\d+(?:\\.\\d+)?)%`);
+    const hit = re.exec(block) ?? re.exec(base);
+    return hit ? Number(hit[1]) / 100 : null;
+  };
+  return { dim: pick('dim'), faint: pick('faint'), ruleStrong: pick('rule-strong') };
+}
+
+/**
+ * `.text-dim` and `.text-faint` carry small text, so both are held to 4.5:1.
+ * `.rule-strong` is the only border an outline button or an unchecked chip has,
+ * which makes it a UI component boundary under WCAG 1.4.11 — 3:1.
+ */
 const DERIVED = [
-  { name: '.text-dim', alpha: 0.68, min: 4.5 },
-  { name: '.text-faint', alpha: 0.44, min: 4.5 },
+  { name: '.text-dim', key: 'dim', min: 4.5 },
+  { name: '.text-faint', key: 'faint', min: 4.5 },
+  { name: '.rule-strong', key: 'ruleStrong', min: 3 },
 ];
 
 let failures = 0;
@@ -95,21 +116,21 @@ for (const { tone, bg, fg, displayFg } of tones) {
     );
   }
 
-  for (const { name, alpha, min } of DERIVED) {
+  const alphas = alphasFor(tone);
+  for (const { name, key, min } of DERIVED) {
+    const alpha = alphas[key];
+    if (alpha === null) {
+      failures += 1;
+      console.log(`  FAIL  ${''.padEnd(12)} ${name} has no alpha in globals.css`);
+      continue;
+    }
     const mixed = composite(fg, bg, alpha);
     const ratio = contrast(mixed, bg);
     const ok = ratio >= min;
-    const large = ratio >= 3;
-    if (!ok) warnings += 1;
+    if (!ok) failures += 1;
     console.log(
-      `  ${ok ? 'PASS' : large ? 'WARN' : 'FAIL'}  ${''.padEnd(12)} ${name.padEnd(11)} → ${mixed}  ${ratio.toFixed(2)}:1  ${
-        ok ? '' : large ? '(large text only)' : '(fails even at large sizes)'
-      }`,
+      `  ${ok ? 'PASS' : 'FAIL'}  ${''.padEnd(12)} ${name.padEnd(12)} ${String(Math.round(alpha * 100)).padStart(3)}% → ${mixed}  ${ratio.toFixed(2)}:1  (needs ${min.toFixed(1)})`,
     );
-    if (!large) {
-      failures += 1;
-      warnings -= 1;
-    }
   }
   console.log('');
 }

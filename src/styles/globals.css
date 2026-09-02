@@ -36,38 +36,73 @@
 [data-tone] {
   background-color: var(--bg);
   color: var(--fg);
+  /*
+   * Softened text and rules are mixed from the block's own ink, so how far they
+   * can be softened depends on the block's contrast headroom. Ink and paper have
+   * 18.67:1 to spend; pink-deep has 5.83:1. These alphas are the per-tone floors
+   * that keep small text at 4.5:1 and a control's only border at 3:1 —
+   * scripts/audit-color-law.mjs reads them straight out of this file and proves it.
+   */
+  --a-dim: 76%;
+  --a-faint: 62%;
+  --a-rule: 16%;
+  --a-rule-strong: 48%;
 }
 [data-tone='yellow'] {
   --bg: var(--color-yellow-bg);
   --fg: var(--color-yellow-ink);
+  --a-dim: 80%;
+  --a-faint: 66%;
+  --a-rule-strong: 52%;
 }
 [data-tone='yellow-deep'] {
   --bg: var(--color-yellow-bg-deep);
   --fg: var(--color-yellow-ink);
+  --a-dim: 82%;
+  --a-faint: 70%;
+  --a-rule-strong: 55%;
 }
 [data-tone='green'] {
   --bg: var(--color-green-bg);
   --fg: var(--color-green-ink);
+  --a-dim: 82%;
+  --a-faint: 70%;
+  --a-rule-strong: 55%;
 }
 [data-tone='green-deep'] {
   --bg: var(--color-green-bg-deep);
   --fg: var(--color-green-ink);
+  --a-dim: 88%;
+  --a-faint: 78%;
+  --a-rule-strong: 60%;
 }
 [data-tone='pink'] {
   --bg: var(--color-pink-bg);
   --fg: var(--color-pink-ink);
+  --a-dim: 86%;
+  --a-faint: 74%;
+  --a-rule-strong: 58%;
 }
 [data-tone='pink-deep'] {
   --bg: var(--color-pink-bg-deep);
   --fg: var(--color-pink-ink);
+  --a-dim: 92%;
+  --a-faint: 83%;
+  --a-rule-strong: 62%;
 }
 [data-tone='ink'] {
   --bg: var(--color-ink-black);
   --fg: var(--color-paper-white);
+  --a-dim: 72%;
+  --a-faint: 52%;
+  --a-rule-strong: 40%;
 }
 [data-tone='paper'] {
   --bg: var(--color-paper-white);
   --fg: var(--color-ink-black);
+  --a-dim: 76%;
+  --a-faint: 60%;
+  --a-rule-strong: 48%;
 }
 /* A wiped block paints its colour on an inner layer so the clip-path edge stays
    hard. The block itself goes transparent; ink-black page base sits behind. */
@@ -175,7 +210,7 @@
     transition: color 180ms var(--ease-out-expo);
   }
   .footer-link {
-    color: color-mix(in srgb, var(--fg) 68%, transparent);
+    color: color-mix(in srgb, var(--fg) var(--a-dim), transparent);
   }
   .footer-link::after,
   .link-rule::after {
@@ -209,16 +244,16 @@
    ============================================================ */
 @layer utilities {
   .text-dim {
-    color: color-mix(in srgb, var(--fg) 68%, transparent);
+    color: color-mix(in srgb, var(--fg) var(--a-dim), transparent);
   }
   .text-faint {
-    color: color-mix(in srgb, var(--fg) 44%, transparent);
+    color: color-mix(in srgb, var(--fg) var(--a-faint), transparent);
   }
   .rule {
-    border-color: color-mix(in srgb, var(--fg) 16%, transparent);
+    border-color: color-mix(in srgb, var(--fg) var(--a-rule), transparent);
   }
   .rule-strong {
-    border-color: color-mix(in srgb, var(--fg) 32%, transparent);
+    border-color: color-mix(in srgb, var(--fg) var(--a-rule-strong), transparent);
   }
   .ink-fill {
     background-color: var(--fg);
