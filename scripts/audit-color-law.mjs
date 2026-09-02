@@ -170,6 +170,36 @@ const PALETTE_OWNERS = new Set([
 const problems = [];
 const lineOf = (text, index) => text.slice(0, index).split('\n').length;
 
+/**
+ * Read the props of a JSX tag without a fragile regex: walk forward from `<Name`
+ * tracking brace depth and string state, and stop at the `>` that closes the tag.
+ * A regex that stopped at the first `>` would mis-parse `pad={n > 2 ? 'lg' : 'md'}`.
+ */
+function tagProps(text, start) {
+  let depth = 0;
+  let quote = null;
+  for (let i = start; i < text.length; i += 1) {
+    const c = text[i];
+    if (quote) {
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') quote = c;
+    else if (c === '{') depth += 1;
+    else if (c === '}') depth -= 1;
+    else if (c === '>' && depth === 0) return text.slice(start, i);
+  }
+  return text.slice(start);
+}
+
+/**
+ * A block only needs an accessible name when it renders as an element that can
+ * become a landmark region. `as="li"` is a list item inside an already-named
+ * list and takes its name from its own heading — an aria-label there would
+ * override the item's content for some screen readers, so those are skipped.
+ */
+const LANDMARK = new Set(['section', 'aside', 'nav', 'form', 'main']);
+
 for (const [file, text] of source) {
   if (!PALETTE_OWNERS.has(file)) {
     for (const m of text.matchAll(BRAND_HEX)) {
@@ -202,12 +232,15 @@ for (const [file, text] of source) {
     ]);
   }
 
-  for (const m of text.matchAll(/<ColorBlock\b([\s\S]*?)>/g)) {
-    if (!/\blabel(ledBy)?=/.test(m[1]))
+  for (const m of text.matchAll(/<ColorBlock\b/g)) {
+    const props = tagProps(text, m.index + m[0].length);
+    const as = /\bas="([a-z]+)"/.exec(props)?.[1] ?? 'section';
+    if (!LANDMARK.has(as)) continue;
+    if (!/\blabel(ledBy)?=/.test(props))
       problems.push([
         'WARN',
         `${file}:${lineOf(text, m.index)}`,
-        'ColorBlock has no label or labelledBy — the section is unnamed to a screen reader',
+        `<${as}> ColorBlock has no label or labelledBy — the section is unnamed to a screen reader`,
       ]);
   }
 }
