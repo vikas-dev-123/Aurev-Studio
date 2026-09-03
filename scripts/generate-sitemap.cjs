@@ -58,5 +58,6 @@ ${urls}
 `;
 
 const out = path.join(root, 'public', 'sitemap.xml');
+fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, xml, 'utf8');
 console.log(`sitemap.xml written with ${routes.length} routes`);

@@ -8,7 +8,7 @@ export const site = {
   name: 'Connection Tech Solution',
   shortName: 'CTS',
   /** Used for canonical URLs, sitemap and structured data. */
-  origin: 'https://connectiontechsolution.com',
+  origin: 'https://connecttechsolution.in',
   tagline: 'Digital Systems, Software & AI',
   promise:
     "We don't just build websites. We build the digital systems that run businesses.",
@@ -44,7 +44,7 @@ export const routes: RouteDef[] = [
     tone: 'yellow',
     /** The wordmark is the home affordance, so Home stays out of the link row. */
     inNav: false,
-    title: `${site.name} — ${site.tagline}`,
+    title: `${site.name} | Software, Web & Digital Solutions`,
     description:
       'We engineer the software, automation and AI systems that run schools, hospitals, hotels and growing businesses. Strategy, design, engineering and long-term ownership from one partner.',
     hint: 'Where we start',

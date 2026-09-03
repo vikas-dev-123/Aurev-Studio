@@ -1,0 +1,17 @@
+{
+  "name": "Connection Tech Solution",
+  "short_name": "CTS",
+  "description": "Digital systems, software and AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0C",
+  "theme_color": "#0B0B0C",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

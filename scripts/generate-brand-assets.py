@@ -20,8 +20,17 @@ YELLOW = (244, 217, 62, 255)
 GREEN = (47, 214, 115, 255)
 PINK = (255, 111, 160, 255)
 
-SANS_BOLD = "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf"
-SANS = "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"
+WINDOWS_FONTS = os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts")
+SANS_BOLD = (
+    os.path.join(WINDOWS_FONTS, "arialbd.ttf")
+    if os.path.exists(os.path.join(WINDOWS_FONTS, "arialbd.ttf"))
+    else "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf"
+)
+SANS = (
+    os.path.join(WINDOWS_FONTS, "arial.ttf")
+    if os.path.exists(os.path.join(WINDOWS_FONTS, "arial.ttf"))
+    else "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"
+)
 
 # Perpendicular offset for the 45-degree chamfers of a 5-unit wide trace.
 O = 2.5 * (2 ** 0.5) / 2
@@ -92,7 +101,7 @@ def build_og():
     tracked(draw, (72, 448), "MOVE BUSINESS.", head, -3.4, YELLOW)
 
     draw.rectangle([72, 566, 132, 570], fill=PAPER)
-    draw.text((152, 555), "connectiontechsolution.com", font=body, fill=(250, 249, 245, 165))
+    draw.text((152, 555), "connecttechsolution.in", font=body, fill=(250, 249, 245, 165))
     return img.convert("RGB")
 
 

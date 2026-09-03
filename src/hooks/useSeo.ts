@@ -11,6 +11,8 @@ type Seo = {
   noindex?: boolean;
 };
 
+const SOCIAL_IMAGE = '/og.png';
+
 function upsertMeta(selector: string, attrs: Record<string, string>) {
   let el = document.head.querySelector<HTMLMetaElement>(selector);
   if (!el) {
@@ -38,7 +40,7 @@ function upsertLink(rel: string, href: string) {
 export function useSeo({ title, description, path, jsonLd, ogType = 'website', noindex }: Seo) {
   useEffect(() => {
     const url = `${site.origin}${path === '/' ? '' : path}`;
-    const image = `${site.origin}/og.png`;
+    const image = `${site.origin}${SOCIAL_IMAGE}`;
 
     document.title = title;
     upsertMeta('meta[name="description"]', { name: 'description', content: description });
