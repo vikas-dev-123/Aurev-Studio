@@ -5,21 +5,21 @@
 import type { Tone } from '../lib/colors';
 
 export const site = {
-  name: 'Connection Tech Solution',
+  name: 'Connect Tech Solution',
   shortName: 'CTS',
   /** Used for canonical URLs, sitemap and structured data. */
   origin: 'https://connecttechsolution.in',
   tagline: 'Digital Systems, Software & AI',
   promise:
     "We don't just build websites. We build the digital systems that run businesses.",
-  founded: '2019',
+  founded: '2025',
   email: 'hello@connectiontechsolution.com',
   /** Left empty until a real line exists — the UI hides empty fields. */
   phone: '',
   whatsapp: '',
   serviceArea: 'India · Middle East · Remote',
   social: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/connection-tech-solution' },
+    { label: 'Instagram', href: 'https://www.instagram.com/solutionsconnecttech?igsi=MTU3aDE4cXZwdHVtNg==' },
     { label: 'GitHub', href: 'https://github.com/connection-tech-solution' },
     { label: 'Dribbble', href: 'https://dribbble.com/connectiontechsolution' },
   ],
