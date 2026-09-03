@@ -13,7 +13,7 @@ export const site = {
   promise:
     "We don't just build websites. We build the digital systems that run businesses.",
   founded: '2025',
-  email: 'hello@connectiontechsolution.com',
+  email: 'connecttechsolutions866@gmail.com',
   /** Left empty until a real line exists — the UI hides empty fields. */
   phone: '',
   whatsapp: '',
