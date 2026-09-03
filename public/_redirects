@@ -1,4 +1,0 @@
-# Single-page app: every route is served by index.html and resolved client-side.
-# Without this, a visitor landing on /services from a search result gets a 404 —
-# which would quietly undo the SEO work.
-/*  /index.html  200

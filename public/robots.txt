@@ -1,7 +1,0 @@
-# Connection Tech Solution — https://connectiontechsolution.com
-# Everything is public. There is no admin surface on this host.
-
-User-agent: *
-Allow: /
-
-Sitemap: https://connectiontechsolution.com/sitemap.xml
