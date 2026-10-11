@@ -1,13 +1,13 @@
 import type { Tone } from '../lib/colors';
 
-export type StepId = 'need' | 'industry' | 'context' | 'details' | 'budget';
+export type StepId = 'need' | 'industry' | 'context' | 'details';
 
 export type StepDef = {
   id: StepId;
   tone: Tone;
   question: string;
   helper: string;
-  kind: 'multi' | 'single' | 'text' | 'fields' | 'pair';
+  kind: 'multi' | 'single' | 'text' | 'fields';
   options?: string[];
 };
 
@@ -53,27 +53,4 @@ export const configuratorSteps: StepDef[] = [
     helper: 'One person on your side is enough to start.',
     kind: 'fields',
   },
-  {
-    id: 'budget',
-    tone: 'green',
-    question: 'Budget and timeline',
-    helper: 'A range is fine. It changes what we propose, not whether we reply.',
-    kind: 'pair',
-  },
-];
-
-export const budgetBands = [
-  'Under ₹2L',
-  '₹2L – ₹6L',
-  '₹6L – ₹15L',
-  '₹15L – ₹40L',
-  'Above ₹40L',
-  'Need help scoping',
-];
-
-export const timelineBands = [
-  'Start immediately',
-  'Within a month',
-  'This quarter',
-  'Planning for next year',
 ];

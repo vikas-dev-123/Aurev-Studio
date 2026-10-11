@@ -15,7 +15,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /** How long the ink cover takes to reach full width — the swap happens under it. */
 const COVER_MS = 300;
 
-const TICKS = ['Scope', 'Sector', 'Problem', 'Contact', 'Budget'];
+const TICKS = ['Scope', 'Sector', 'Problem', 'Contact'];
 
 /** Why the Next button is dimmed — shown only while it is. */
 const HINTS: Record<StepId, string> = {
@@ -23,7 +23,6 @@ const HINTS: Record<StepId, string> = {
   industry: 'Choose the closest sector.',
   context: 'A sentence or two is enough.',
   details: 'A name and a working email, so we can reply.',
-  budget: 'A band and a timeline.',
 };
 
 const LAST = configuratorSteps.length - 1;
@@ -141,7 +140,7 @@ export function Configurator() {
             </p>
           </div>
 
-          <ol aria-hidden className="mt-5 grid grid-cols-5 gap-1.5">
+          <ol aria-hidden className="mt-5 grid grid-cols-4 gap-1.5">
             {configuratorSteps.map((tick, position) => (
               <li key={tick.id}>
                 <span

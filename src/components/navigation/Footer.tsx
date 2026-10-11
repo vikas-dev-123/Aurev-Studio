@@ -34,7 +34,7 @@ export function Footer() {
             <a
               href={`mailto:${site.email}`}
               data-cursor="open"
-              className="display mt-7 inline-block border-b border-white/25 pb-1 text-[clamp(1.125rem,2.6vw,1.75rem)] transition-colors hover:border-white"
+              className="mt-6 inline-block max-w-full break-all border-b border-white/25 pb-0.5 text-[0.875rem] sm:text-[0.9375rem] font-medium tracking-tight transition-colors hover:border-white"
             >
               {site.email}
             </a>

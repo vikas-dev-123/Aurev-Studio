@@ -1,6 +1,5 @@
 import type { ChangeEvent, ReactNode } from 'react';
 import type { StepDef } from '../../data/contact';
-import { budgetBands, timelineBands } from '../../data/contact';
 
 /**
  * The answers, and the inputs that collect them.
@@ -18,8 +17,6 @@ export type Answers = {
   org: string;
   email: string;
   phone: string;
-  budget: string;
-  timeline: string;
 };
 
 export const EMPTY_ANSWERS: Answers = {
@@ -31,8 +28,6 @@ export const EMPTY_ANSWERS: Answers = {
   org: '',
   email: '',
   phone: '',
-  budget: '',
-  timeline: '',
 };
 
 const CHIP =
@@ -124,8 +119,6 @@ export function canAdvance(step: StepDef, answers: Answers): boolean {
       return answers.context.trim().length > 8;
     case 'details':
       return answers.name.trim() !== '' && EMAIL.test(answers.email.trim());
-    case 'budget':
-      return answers.budget !== '' && answers.timeline !== '';
     default:
       return true;
   }
@@ -256,44 +249,7 @@ export function StepFields({
     );
   }
 
-  return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-      <fieldset>
-        <legend className="eyebrow opacity-70">Budget</legend>
-        <div className="mt-3.5 flex flex-wrap gap-2.5">
-          {budgetBands.map((band) => (
-            <Choice
-              key={band}
-              type="radio"
-              name="budget"
-              value={band}
-              checked={answers.budget === band}
-              onChange={() => set({ budget: band })}
-            >
-              {band}
-            </Choice>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend className="eyebrow opacity-70">Timeline</legend>
-        <div className="mt-3.5 flex flex-wrap gap-2.5">
-          {timelineBands.map((band) => (
-            <Choice
-              key={band}
-              type="radio"
-              name="timeline"
-              value={band}
-              checked={answers.timeline === band}
-              onChange={() => set({ timeline: band })}
-            >
-              {band}
-            </Choice>
-          ))}
-        </div>
-      </fieldset>
-    </div>
-  );
+  return null;
 }
 
 /** The assembled brief — shown on the review panel and sent as the mail body. */
@@ -307,7 +263,5 @@ export function briefLines(answers: Answers): [string, string][] {
     ['Organisation', answers.org.trim()],
     ['Email', answers.email.trim()],
     ['Phone', answers.phone.trim()],
-    ['Budget', answers.budget],
-    ['Timeline', answers.timeline],
   ].filter((entry): entry is [string, string] => entry[1] !== '');
 }
