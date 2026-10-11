@@ -34,7 +34,9 @@ export function Cursor() {
   const [pressed, setPressed] = useState(false);
   const [visible, setVisible] = useState(false);
   const [ink, setInk] = useState<{ fg: string; bg: string }>({ fg: '#FAF9F5', bg: '#0B0B0C' });
-  const frame = useRef(0);
+  const visibleRef = useRef(false);
+  const hasMoved = useRef(false);
+  const currentBlockRef = useRef<Element | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
@@ -46,13 +48,26 @@ export function Cursor() {
     if (!enabled) return;
 
     const onMove = (event: PointerEvent) => {
-      if (frame.current) return;
-      frame.current = requestAnimationFrame(() => {
-        frame.current = 0;
-        x.set(event.clientX);
-        y.set(event.clientY);
-      });
-      if (!visible) setVisible(true);
+      const cx = event.clientX;
+      const cy = event.clientY;
+
+      if (!hasMoved.current) {
+        hasMoved.current = true;
+        x.set(cx);
+        y.set(cy);
+        dotX.jump(cx);
+        dotY.jump(cy);
+        padX.jump(cx);
+        padY.jump(cy);
+      } else {
+        x.set(cx);
+        y.set(cy);
+      }
+
+      if (!visibleRef.current) {
+        visibleRef.current = true;
+        setVisible(true);
+      }
     };
 
     // Tone + label only change when the pointer crosses into a new element,
@@ -62,20 +77,31 @@ export function Cursor() {
       if (!target || typeof target.closest !== 'function') return;
       const hit = target.closest('[data-cursor]');
       const next = (hit?.getAttribute('data-cursor') ?? '') as Label;
-      setLabel(next in READABLE ? next : '');
+      const nextValid = next in READABLE ? next : '';
+      setLabel((prev) => (prev === nextValid ? prev : nextValid));
+
       const block = target.closest('[data-tone]');
-      if (block) {
+      if (block && block !== currentBlockRef.current) {
+        currentBlockRef.current = block;
         const style = getComputedStyle(block);
         const fg = style.getPropertyValue('--fg').trim();
         const bg = style.getPropertyValue('--bg').trim();
-        if (fg && bg) setInk({ fg, bg });
+        if (fg && bg) {
+          setInk((prev) => (prev.fg === fg && prev.bg === bg ? prev : { fg, bg }));
+        }
       }
     };
 
     const onDown = () => setPressed(true);
     const onUp = () => setPressed(false);
-    const onLeave = () => setVisible(false);
-    const onEnter = () => setVisible(true);
+    const onLeave = () => {
+      visibleRef.current = false;
+      setVisible(false);
+    };
+    const onEnter = () => {
+      visibleRef.current = true;
+      setVisible(true);
+    };
 
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerover', onOver, { passive: true });
@@ -83,8 +109,8 @@ export function Cursor() {
     window.addEventListener('pointerup', onUp, { passive: true });
     document.addEventListener('pointerleave', onLeave);
     document.addEventListener('pointerenter', onEnter);
+
     return () => {
-      if (frame.current) cancelAnimationFrame(frame.current);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerover', onOver);
       window.removeEventListener('pointerdown', onDown);
@@ -92,7 +118,7 @@ export function Cursor() {
       document.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('pointerenter', onEnter);
     };
-  }, [enabled, visible, x, y]);
+  }, [enabled, dotX, dotY, padX, padY, x, y]);
 
   if (!enabled) return null;
 
